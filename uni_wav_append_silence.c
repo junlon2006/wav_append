@@ -126,7 +126,10 @@ static void _get_all_wav_files(char *path, char *msec) {
   char file_name[512];
   int fd;
   WavHeader wavheader;
-  dir = opendir(path);
+  if (NULL == (dir = opendir(path))) {
+    LOGE(WAV_APPEND_SILENCE_TAG, "open [%s] failed", path);
+    return;
+  }
   LOGT(WAV_APPEND_SILENCE_TAG, "path=%s, msec=%s", path, msec);
   while ((ent = readdir(dir)) != NULL) {
     if (ent->d_type == 0) {
@@ -140,6 +143,7 @@ static void _get_all_wav_files(char *path, char *msec) {
       }
     }
   }
+  closedir(dir);
 }
 
 int main(int argc, char *argv[]) {
