@@ -21,7 +21,6 @@
  * Date        : 2019.05.11
  *
  **************************************************************************/
-
 #include "uni_wav_header.h"
 #include "uni_log.h"
 #include <stdio.h>
@@ -38,7 +37,8 @@
 
 static void _append_silence_process(int fd, WavHeader *wavheader, char *msec) {
   int msecond = atoi(msec);
-  int append_silence_len = wavheader->sample_rate / 1000 * wavheader->bit / 8 * msecond;
+  int append_silence_len = wavheader->sample_rate / 1000 * wavheader->bit / 8 *
+                           msecond;
   char *data = (char *)malloc(wavheader->audio_len + append_silence_len);
   memset(data + wavheader->audio_len, 0, append_silence_len);
   LOGT(WAV_APPEND_SILENCE_TAG, "process [%d] len=%d", fd, append_silence_len);
@@ -63,25 +63,26 @@ L_END:
 }
 
 static void _print(WavHeader *wavheader) {
-  LOGT(WAV_APPEND_SILENCE_TAG, "riff[%c%c%c%c]", wavheader->riff[0], wavheader->riff[1],
-       wavheader->riff[2], wavheader->riff[3]);
+  LOGT(WAV_APPEND_SILENCE_TAG, "============================================");
+  LOGT(WAV_APPEND_SILENCE_TAG, "riff[%c%c%c%c]", wavheader->riff[0],
+       wavheader->riff[1], wavheader->riff[2], wavheader->riff[3]);
   LOGT(WAV_APPEND_SILENCE_TAG, "file_len=%d", wavheader->file_len);
-  LOGT(WAV_APPEND_SILENCE_TAG, "wave[%c%c%c%c]", wavheader->wave[0], wavheader->wave[1],
-       wavheader->wave[2], wavheader->wave[3]);
-  LOGT(WAV_APPEND_SILENCE_TAG, "fmt[%c%c%c%c]", wavheader->fmt[0], wavheader->fmt[1],
-       wavheader->fmt[2], wavheader->fmt[3]);
-  LOGT(WAV_APPEND_SILENCE_TAG, "filter[%d%d%d%d]", wavheader->filter[0], wavheader->filter[1],
-       wavheader->filter[2]);
+  LOGT(WAV_APPEND_SILENCE_TAG, "wave[%c%c%c%c]", wavheader->wave[0],
+       wavheader->wave[1], wavheader->wave[2], wavheader->wave[3]);
+  LOGT(WAV_APPEND_SILENCE_TAG, "fmt[%c%c%c%c]", wavheader->fmt[0],
+       wavheader->fmt[1], wavheader->fmt[2], wavheader->fmt[3]);
+  LOGT(WAV_APPEND_SILENCE_TAG, "filter[%d%d%d%d]", wavheader->filter[0],
+       wavheader->filter[1], wavheader->filter[2]);
   LOGT(WAV_APPEND_SILENCE_TAG, "type=%d", wavheader->type);
   LOGT(WAV_APPEND_SILENCE_TAG, "channel=%d", wavheader->channel);
   LOGT(WAV_APPEND_SILENCE_TAG, "sample_rate=%d", wavheader->sample_rate);
   LOGT(WAV_APPEND_SILENCE_TAG, "bitrate=%d", wavheader->bitrate);
   LOGT(WAV_APPEND_SILENCE_TAG, "adjust=%d", wavheader->adjust);
   LOGT(WAV_APPEND_SILENCE_TAG, "bit=%d", wavheader->bit);
-  LOGT(WAV_APPEND_SILENCE_TAG, "data[%c%c%c%c]", wavheader->data[0], wavheader->data[1],
-       wavheader->data[2], wavheader->data[3]);
+  LOGT(WAV_APPEND_SILENCE_TAG, "data[%c%c%c%c]", wavheader->data[0],
+       wavheader->data[1], wavheader->data[2], wavheader->data[3]);
   LOGT(WAV_APPEND_SILENCE_TAG, "audio_len=%d", wavheader->audio_len);
-
+  LOGT(WAV_APPEND_SILENCE_TAG, "============================================");
 }
 
 static bool _is_wav_format(char *file_name, int *fd, WavHeader *wavheader) {
@@ -94,9 +95,10 @@ static bool _is_wav_format(char *file_name, int *fd, WavHeader *wavheader) {
   }
   len = lseek(*fd, 0, SEEK_END);
   lseek(*fd, 0, SEEK_SET);
-  LOGT(WAV_APPEND_SILENCE_TAG, "#########[%d], [%d]", sizeof(WavHeader), len);
-  if (sizeof(WavHeader) != (read_len = read(*fd, wavheader, sizeof(WavHeader)))) {
-    LOGT(WAV_APPEND_SILENCE_TAG, "read file[%s] failed, read_len=%d", file_name, read_len);
+  if (sizeof(WavHeader) !=
+      (read_len = read(*fd, wavheader, sizeof(WavHeader)))) {
+    LOGT(WAV_APPEND_SILENCE_TAG, "read file[%s] failed, read_len=%d", file_name,
+         read_len);
     goto L_ERROR;
   }
   _print(wavheader);
@@ -133,7 +135,6 @@ static void _get_all_wav_files(char *path, char *msec) {
       }
       sprintf(file_name,"%s/%s", path, ent->d_name);
       LOGT(WAV_APPEND_SILENCE_TAG, "%s", file_name);
-      //LOGT(WAV_APPEND_SILENCE_TAG, "%s----%d", ent->d_name, ent->d_type);
       if (_is_wav_format(file_name, &fd, &wavheader)) {
         _append_silence_process(fd, &wavheader, msec);
       }
@@ -143,7 +144,7 @@ static void _get_all_wav_files(char *path, char *msec) {
 
 int main(int argc, char *argv[]) {
   if (argc != 3) {
-    LOGW(WAV_APPEND_SILENCE_TAG, "wav_append_silence wavdirectory silence msec.");
+    LOGW(WAV_APPEND_SILENCE_TAG, "demo wavdirectory silence_msec");
     return -1;
   }
   _get_all_wav_files(argv[1], argv[2]);
