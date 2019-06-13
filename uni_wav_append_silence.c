@@ -132,7 +132,7 @@ static void _get_all_wav_files(char *path, char *msec) {
   }
   LOGT(WAV_APPEND_SILENCE_TAG, "path=%s, msec=%s", path, msec);
   while ((ent = readdir(dir)) != NULL) {
-    if (ent->d_type == 0) {
+    if (ent->d_type == DT_REG) {
       if (strcmp(ent->d_name,".") == 0 || strcmp(ent->d_name,"..") == 0) {
         continue;
       }
